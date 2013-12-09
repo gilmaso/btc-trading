@@ -24,7 +24,7 @@
 (defn bytes-to-hexstring [bytes]
   "Convert bytes to a String.
   Dev Status: Verified agains the Python implementation (2013-12-08)."
-  (apply str (map #(format "%x" %) bytes)))
+  (apply str (map #(format "%02x" %) bytes)))
 
 
 
@@ -33,3 +33,5 @@
   "Returns the HMAC SHA1 hex string signature from a key-string pair.
   Dev Status: Verified against the Python implementation (2013-12-08)."
   (bytes-to-hexstring (sign-to-bytes key string)))
+
+(sign-to-hexstring "my-key" "my-data")

@@ -18,6 +18,7 @@
 (def method "getAccountInfo")
 
 (def tonce (str (* (System/currentTimeMillis) 1000)))
+;(def tonce 1000)
 
 (def signature-parameters
   "Returns the parameters for the btc-china request api."
@@ -30,8 +31,11 @@
 
 (def access-hash (hmac/sign-to-hexstring secret-key signature-parameters))
 
-(def auth-string (str "Basic: " (encoding/to-base64 (str access-key ":" access-hash))))
+(hmac/sign-to-hexstring "my-secret" "my-data")
 
+(println access-hash)
+
+(def auth-string (str "Basic: " (encoding/to-base64 (str access-key ":" access-hash))))
 
 (def json-body
   "Returns the body for the json request"
@@ -46,7 +50,7 @@
               :body json-body
               :headers {"Authorization" auth-string
                         "Json-Rpc-Tonce" tonce}})
-
+(println options)
 (client/post (str "https://" base-url) options
           (fn [{:keys [status headers body error]}] ;; asynchronous handle response
             (if error

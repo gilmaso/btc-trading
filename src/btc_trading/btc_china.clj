@@ -10,9 +10,9 @@
 
 (def base-url "api.btcchina.com/api_trade_v1.php")
 
-(def access-key (str api-keys/btc-china-access-key))
+(def access-key api-keys/btc-china-access-key)
 
-(def secret-key (str api-keys/btc-china-secret-key))
+(def secret-key api-keys/btc-china-secret-key)
 
 (def request-method "post")
 

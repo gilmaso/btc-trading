@@ -10,9 +10,9 @@
 
 (def base-url "api.btcchina.com/api_trade_v1.php")
 
-(def access-key api-keys/btc-china-access-key)
+(def access-key (str api-keys/btc-china-access-key))
 
-(def secret-key api-keys/btc-china-secret-key)
+(def secret-key (str api-keys/btc-china-secret-key))
 
 (def request-method "post")
 
@@ -36,19 +36,19 @@
 (def json-body
   "Returns the body for the json request"
   (json/generate-string {"tonce" tonce
-                    "accesskey" api-keys/btc-china-access-key
+                    "accesskey" access-key
                     "requestmethod" request-method
                     "id" tonce
                     "method" method
                     "params" ""}))
 
 (def options {:timeout 2000           ; ms
-              :query-params {:tonce tonce
-                             :accesskey access-key
-                             :requestmethod request-method
-                             :id tonce
-                             :method method
-                             :params ""}
+              :query-params (sorted-map :tonce tonce
+                                        :accesskey access-key
+                                        :requestmethod request-method
+                                        :id tonce
+                                        :method method
+                                        :params "")
               :headers {"Authorization" auth-string
                         "Json-Rpc-Tonce" tonce}})
 

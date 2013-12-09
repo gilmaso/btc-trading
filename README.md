@@ -15,7 +15,7 @@ Git from https://github.com/gilmaso/btc-trading
 
 Make sure to add your authentication keys:
 
-1. Rename btc-trading/tree/master/src/btc_trading/api-keys.clj.example to api-keys.clj
+1. Rename btc-trading/src/btc_trading/api-keys.clj.example to api-keys.clj
 
 2. Add your keys to api-keys.clj
 

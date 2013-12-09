@@ -1,7 +1,6 @@
 (ns btc-trading.btc-china
-  (:import [javax.net.ssl HttpsURLConnection]
-           [java.net URL])
   (:require [btc-trading.api_keys :as api-keys :only (btc-china-access-key btc-china-secret-key)]
+            [btc-trading.encoding :as encoding :only (to-base64)]
             [btc-trading.hmac :as hmac :only (sign-to-hexstring)]
             [org.httpkit.client :as client]
             [clojure.data.codec.base64 :as b64]
@@ -31,12 +30,13 @@
 
 (def access-hash (hmac/sign-to-hexstring secret-key signature-parameters))
 
-(def auth-string (str "Basic: " (b64/encode (.getBytes (str access-key ":" access-hash)))))
+(def auth-string (str "Basic: " (encoding/to-base64 (str access-key ":" access-hash))))
+
 
 (def json-body
   "Returns the body for the json request"
   (json/generate-string ["tonce" tonce
-                         "accesskey" api-keys/btc-china-access-key
+                         "accesskey" access-key
                          "requestmethod" request-method
                          "id" tonce
                          "method" method

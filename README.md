@@ -12,6 +12,10 @@ Git from https://github.com/gilmaso/btc-trading
 
 Do not use this software. It is not ready to be used.
 
+Make sure to add your authentication keys:
+1. Rename btc-trading/tree/master/src/btc_trading/api-keys.clj.example to api-keys.clj
+2. Add your keys to api-keys.clj
+
 ## Options
 
 ...

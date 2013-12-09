@@ -1,0 +1,5 @@
+(ns btc-trading.api_keys)
+
+(def btc-china-access-key "ACCESS-KEY")
+
+(def btc-china-secret-key "SECRET-KEY")

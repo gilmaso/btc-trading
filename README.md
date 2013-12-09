@@ -1,4 +1,4 @@
-# btc-trading
+#btc-trading
 
 This is alpha software. Do not use it!
 
@@ -10,10 +10,13 @@ Git from https://github.com/gilmaso/btc-trading
 
 ## Usage
 
-Do not use this software. It is not ready to be used.
+*Do not use this software. It is not ready to be used.*
+
 
 Make sure to add your authentication keys:
+
 1. Rename btc-trading/tree/master/src/btc_trading/api-keys.clj.example to api-keys.clj
+
 2. Add your keys to api-keys.clj
 
 ## Options

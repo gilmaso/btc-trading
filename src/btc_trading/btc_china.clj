@@ -29,7 +29,7 @@
        "&method=" method
        "&params="))
 
-(def access-hash (hmac/sign-to-hexstring api-keys/btc-china-secret-key signature-parameters))
+(def access-hash (hmac/sign-to-hexstring secret-key signature-parameters))
 
 (println signature-parameters)
 (def auth-string (str "Basic: " (b64/encode (.getBytes (str access-key ":" access-hash)))))

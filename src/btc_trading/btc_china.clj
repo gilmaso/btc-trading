@@ -33,15 +33,6 @@
 
 (def auth-string (str "Basic: " (b64/encode (.getBytes (str access-key ":" access-hash)))))
 
-(def json-body
-  "Returns the body for the json request"
-  (json/generate-string {"tonce" tonce
-                    "accesskey" access-key
-                    "requestmethod" request-method
-                    "id" tonce
-                    "method" method
-                    "params" ""}))
-
 (def options {:timeout 2000           ; ms
               :query-params (sorted-map :tonce tonce
                                         :accesskey access-key

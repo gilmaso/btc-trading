@@ -23,7 +23,7 @@
 (def signature-parameters
   "Returns the parameters for the btc-china request api."
   (str "tonce=" tonce
-       "&accesskey=" api-keys/btc-china-access-key
+       "&accesskey=" access-key
        "&requestmethod=" request-method
        "&id=" tonce
        "&method=" method
@@ -31,6 +31,7 @@
 
 (def access-hash (hmac/sign-to-hexstring api-keys/btc-china-secret-key signature-parameters))
 
+(println signature-parameters)
 (def auth-string (str "Basic: " (b64/encode (.getBytes (str access-key ":" access-hash)))))
 
 (def options {:timeout 2000           ; ms

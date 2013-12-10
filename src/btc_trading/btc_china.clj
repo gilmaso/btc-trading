@@ -62,7 +62,7 @@
               :body json-body
               :headers {"Authorization" auth-string
                         "Json-Rpc-Tonce" tonce}})
-(println options)
+
 (client/post (str "https://" base-url) options
           (fn [{:keys [status headers body error]}] ;; asynchronous handle response
             (if error

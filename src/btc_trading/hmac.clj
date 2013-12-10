@@ -21,12 +21,12 @@
 
 (def algorithm "HmacSHA1")
 
-(defn return-signing-key [key mac]
+(defn- return-signing-key [key mac]
   "Get an hmac key from the raw key bytes given some 'mac' algorithm.
   Known 'mac' options: HmacSHA1"
     (SecretKeySpec. (.getBytes key) (.getAlgorithm mac)))
 
-(defn sign-to-bytes [key string]
+(defn- sign-to-bytes [key string]
   "Returns the byte signature of a string with a given key, using a SHA1 HMAC."
   (let [mac (Mac/getInstance algorithm)
         secretKey (return-signing-key key mac)]
@@ -36,7 +36,7 @@
         .doFinal)))
 
 ; Formatting
-(defn bytes-to-hexstring [bytes]
+(defn- bytes-to-hexstring [bytes]
   "Convert bytes to a String."
   (apply str (map #(format "%02x" %) bytes))) ; "%02x" preserves leading zeros
 
@@ -46,5 +46,3 @@
 (defn sign-to-hexstring [key string]
   "Returns the HMAC SHA1 hex string signature from a key-string pair."
   (bytes-to-hexstring (sign-to-bytes key string)))
-
-(sign-to-hexstring "my-key" "my-data")

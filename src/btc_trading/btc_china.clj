@@ -8,6 +8,7 @@
 
 
 (def base-url "api.btcchina.com/api_trade_v1.php")
+;(def base-url "127.0.0.1:8000/")
 
 (def access-key api-keys/btc-china-access-key)
 
@@ -18,33 +19,34 @@
 (def method "getAccountInfo")
 
 (def tonce (str (* (System/currentTimeMillis) 1000)))
-;(def tonce 1000)
+;(def tonce 100)
 
 (def signature-parameters
   "Returns the parameters for the btc-china request api."
   (str "tonce=" tonce
        "&accesskey=" access-key
        "&requestmethod=" request-method
-       "&id=" tonce
+       "&id=1"
        "&method=" method
        "&params="))
+(println (str "sig params" signature-parameters))
 
 (def access-hash (hmac/sign-to-hexstring secret-key signature-parameters))
+(println (str "access-hash " access-hash))
 
-(hmac/sign-to-hexstring "my-secret" "my-data")
-
-(println access-hash)
-
-(def auth-string (str "Basic: " (encoding/to-base64 (str access-key ":" access-hash))))
+(def auth-string (str "Basic " (encoding/to-base64 (str access-key ":" access-hash))))
+(println (str "auth-string " auth-string))
 
 (def json-body
   "Returns the body for the json request"
-  (json/generate-string ["tonce" tonce
-                         "accesskey" access-key
-                         "requestmethod" request-method
-                         "id" tonce
+  (json/generate-string {;"tonce" tonce
+                         ;"accesskey" access-key
+                         ;"requestmethod" request-method
+                         "id" "1"
                          "method" method
-                         "params" ""]))
+                         "params" []}))
+(println json-body)
+
 
 (def options {:timeout 2000           ; ms
               :body json-body
@@ -55,5 +57,6 @@
           (fn [{:keys [status headers body error]}] ;; asynchronous handle response
             (if error
               (println "Failed, exception is " error)
-              (println "Async HTTP GET: " status))))
+              (println "Async HTTP GET: " status))
+            (println (str status headers body))))
 

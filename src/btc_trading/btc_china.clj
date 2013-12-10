@@ -20,10 +20,13 @@
 (ns btc-trading.btc-china
   (:require [btc-trading.api_keys :as api-keys :only (btc-china-access-key btc-china-secret-key)]
             [btc-trading.encoding :as encoding :only (to-base64)]
+            [btc-trading.helpers :as helpers :only (seq-to-csv)]
             [btc-trading.hmac :as hmac :only (sign-to-hexstring)]
             [org.httpkit.client :as client]
             [clojure.data.codec.base64 :as b64]
             [cheshire.core :as json]))
+
+; Reference Document: http://btcchina.org/api-trade-documentation-en
 
 
 (def base-url "api.btcchina.com/api_trade_v1.php")
@@ -32,41 +35,71 @@
 
 (def secret-key api-keys/btc-china-secret-key)
 
-(def request-method "post")
-
-(def method "getAccountInfo")
-
-(def tonce (str (* (System/currentTimeMillis) 1000)))
-
-(def signature-parameters
+(defn- signature-string [tonce method params request-method]
   "Returns the parameters for the btc-china request api."
   (str "tonce=" tonce
        "&accesskey=" access-key
        "&requestmethod=" request-method
        "&id=" tonce
        "&method=" method
-       "&params="))
+       "&params=" (helpers/seq-to-csv params)))
 
-(def access-hash (hmac/sign-to-hexstring secret-key signature-parameters))
+(defn- auth-string [signature-string]
+  "Returns the authorization string which ends up in the header of the request."
+  (let [access-hash (hmac/sign-to-hexstring secret-key signature-string)]
+    (str "Basic " (encoding/to-base64 (str access-key ":" access-hash)))))
 
-(def auth-string (str "Basic " (encoding/to-base64 (str access-key ":" access-hash))))
+(defn- request-options [tonce method params auth-string]
+  "Returns the map of request options required by the http client."
+  (assoc {}
+    :timeout 2000 ; ms
+    :body (json/generate-string {"id" tonce
+                                 "method" method
+                                 "params" params})
+    :headers {"Authorization" auth-string
+              "Json-Rpc-Tonce" tonce}))
 
-(def json-body
-  "Returns the body for the json request"
-  (json/generate-string {"id" tonce
-                         "method" method
-                         "params" []}))
-
-
-(def options {:timeout 2000           ; ms
-              :body json-body
-              :headers {"Authorization" auth-string
-                        "Json-Rpc-Tonce" tonce}})
-
-(client/post (str "https://" base-url) options
+(defn- post-request [options]
+  "Posts the a request to the server based on options supplied.
+  This function is supposed to get its options from request-options."
+  (client/post (str "https://" base-url) options
           (fn [{:keys [status headers body error]}] ;; asynchronous handle response
             (if error
               (println "Failed, exception is " error)
               (println "Async HTTP GET: " status))
-            (println (str status headers body))))
+            (println (str status headers body)))))
+
+(defn- request [method params request-method]
+  "Builds and sends a request to the server."
+  (let [tonce (str (* (System/currentTimeMillis) 1000))]
+    (post-request
+     (request-options
+      tonce
+      method
+      params
+      (auth-string
+       (signature-string
+        tonce
+        method
+        params
+        request-method))))))
+
+
+; Public functions
+
+(defn get-account-info []
+  (request "getAccountInfo" [] "post"))
+
+(defn get-market-depth []
+  (request "getMarketDepth" [] "post"))
+
+(defn buy-btc [price amount]
+  (request "buyOrder" [price amount] "post"))
+
+(defn sell-btc [price amount]
+  (request "sellOrder" [price amount] "post"))
+
+(defn cancel-order [order-id]
+  (request "cancelOrder" [order-id] "post"))
+
 

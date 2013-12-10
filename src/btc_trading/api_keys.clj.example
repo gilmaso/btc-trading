@@ -20,7 +20,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This file is where you keep your keys.                     ;
 ; Rename this file from api-keys.clj.example to api-kes.clj. ;
-; Then, replace ACCESS-KEY and SECRET-KEY with your keys     ;
+; Then, replace ACCESS-KEY and SECRET-KEY with your keys.    ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (def btc-china-access-key "ACCESS-KEY")

@@ -29,11 +29,11 @@
 ; Reference Document: http://btcchina.org/api-trade-documentation-en
 
 
-(def base-url "api.btcchina.com/api_trade_v1.php")
+(def ^:private base-url "api.btcchina.com/api_trade_v1.php")
 
-(def access-key api-keys/btc-china-access-key)
+(def ^:private access-key api-keys/btc-china-access-key)
 
-(def secret-key api-keys/btc-china-secret-key)
+(def ^:private secret-key api-keys/btc-china-secret-key)
 
 (defn- signature-string [tonce method params request-method]
   "Returns the parameters for the btc-china request api."

@@ -29,7 +29,7 @@ Make sure to add your authentication keys:
 
 ### Bugs
 
-...
+*Everywhere*
 
 ## License
 

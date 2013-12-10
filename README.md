@@ -1,6 +1,6 @@
 #btc-trading
 
-This is alpha software. Do not use it!
+*This is alpha software. Do not use it!*
 
 A simple BTC trading client
 

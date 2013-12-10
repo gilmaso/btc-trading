@@ -91,7 +91,7 @@
   (request "getAccountInfo" [] "post"))
 
 (defn get-market-depth []
-  (request "getMarketDepth" [] "post"))
+  (request "getMarketDepth2" [] "post"))
 
 (defn buy-btc [price amount]
   (request "buyOrder" [price amount] "post"))
@@ -101,5 +101,3 @@
 
 (defn cancel-order [order-id]
   (request "cancelOrder" [order-id] "post"))
-
-

@@ -60,7 +60,7 @@
               "Json-Rpc-Tonce" tonce}))
 
 (defn- post-request [options]
-  "Posts the a request to the server based on options supplied.
+  "Posts the request to the server based on options supplied.
   This function is supposed to get its options from request-options."
   (client/post (str "https://" base-url) options
           (fn [{:keys [status headers body error]}] ;; asynchronous handle response

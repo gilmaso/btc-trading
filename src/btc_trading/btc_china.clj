@@ -101,3 +101,9 @@
 
 (defn cancel-order [order-id]
   (request "cancelOrder" [order-id] "post"))
+
+(defn request-withdrawal [currency amount]
+  "Currency options: CNY, BTC
+  TODO: Currently giving me -32000 error (Internal error)"
+  (request "requestWithdrawal" [currency amount] "post"))
+

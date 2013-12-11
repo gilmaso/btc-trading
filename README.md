@@ -31,6 +31,12 @@ Make sure to add your authentication keys:
 
 *Everywhere*
 
+## Todo
+
+Implement Pandec as the hashing library https://github.com/xsc/pandect
+
+Implement btce via https://github.com/jphackworth/clj-btce
+
 ## License
 
 Copyright © 2013

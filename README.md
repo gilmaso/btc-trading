@@ -27,7 +27,7 @@ Make sure to add your authentication keys:
 
 ...
 
-### Bugs
+## Bugs
 
 *Everywhere*
 

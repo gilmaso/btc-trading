@@ -37,6 +37,8 @@ Implement Pandec as the hashing library https://github.com/xsc/pandect
 
 Implement btce via https://github.com/jphackworth/clj-btce
 
+Implement vircurex via https://github.com/jphackworth/clj-vircurex
+
 ## License
 
 Copyright © 2013

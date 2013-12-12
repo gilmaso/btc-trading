@@ -88,7 +88,7 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
-;; Core BTCCHina API  ;;
+;; Core BTCChina API  ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Buy, sell, cancel [Action]

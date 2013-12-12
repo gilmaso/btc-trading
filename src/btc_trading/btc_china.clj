@@ -202,12 +202,23 @@
   "Returns the lowest ask order"
   (-> (get-market-depth 1) :result :market_depth :ask (get 0) :price))
 
+(defn vol-adj-lowest-ask [quantity]
+  "Returns the lowest asking price adjusted to the ask volume given
+  the quantity of bitcoins you want.
+  Example: Asking 1 BTC @ $1,001
+           Asking 1 BTC @ $1,000
+           You want 2 BTC
+           Volume adjusted lowest ask = $2,001"
+  )
+
 (defn highest-bid []
   "Returns the highest bid order"
   (-> (get-market-depth 1) :result :market_depth :bid (get 0) :price))
 
+(get-market-depth 10)
 
+(def data [{:price 5309.59, :amount 0.2}
+                                         {:price 5312, :amount 1.665}
+                                         {:price 5317.32, :amount 0.02}])
 
-
-
-
+(doseq [x y] data)

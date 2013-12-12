@@ -24,8 +24,7 @@
             [btc-trading.hmac :as hmac :only (sign-to-hexstring)]
             [org.httpkit.client :as client]
             [clojure.data.codec.base64 :as b64]
-            [cheshire.core :as json]
-            [clojure.core.async :as async :refer [chan close! go >! <!!]]))
+            [cheshire.core :as json]))
 
 ; Reference Document: http://btcchina.org/api-trade-documentation-en
 
@@ -60,20 +59,20 @@
     :headers {"Authorization" auth-string
               "Json-Rpc-Tonce" tonce}))
 
-(defn- post-request [chan options]
+(defn- post-request [result options]
   "Posts the request to the server based on options supplied.
   This function is supposed to get its options from request-options."
   (client/post (str "https://" base-url) options
           (fn [{:keys [status headers body error]}] ;; asynchronous handle response
             (if error
-              (go (>! chan error))
-              (go (>! chan body))))))
+              (deliver result error)
+              (deliver result body)))))
 
 (defn- request [method params request-method]
   "Builds and sends a request to the server for a result."
   (let [tonce (str (* (System/currentTimeMillis) 1000))
-        c (chan)]
-    (post-request c
+        result (promise)]
+    (post-request result
      (request-options
       tonce
       method
@@ -84,7 +83,7 @@
         method
         params
         request-method))))
-    (json/parse-string (<!! (go (<! c))) true)))
+    (json/parse-string @result true)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
@@ -205,9 +204,3 @@
 (defn highest-bid []
   "Returns the highest bid order"
   (-> (get-market-depth 1) :result :market_depth :bid (get 0) :price))
-
-
-
-
-
-

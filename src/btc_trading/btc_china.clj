@@ -24,7 +24,8 @@
             [btc-trading.hmac :as hmac :only (sign-to-hexstring)]
             [org.httpkit.client :as client]
             [clojure.data.codec.base64 :as b64]
-            [cheshire.core :as json]))
+            [cheshire.core :as json]
+            [clojure.core.async :as async :refer [chan close! go >! <!!]]))
 
 ; Reference Document: http://btcchina.org/api-trade-documentation-en
 
@@ -59,21 +60,20 @@
     :headers {"Authorization" auth-string
               "Json-Rpc-Tonce" tonce}))
 
-(defn- post-request [options]
+(defn- post-request [chan options]
   "Posts the request to the server based on options supplied.
   This function is supposed to get its options from request-options."
   (client/post (str "https://" base-url) options
           (fn [{:keys [status headers body error]}] ;; asynchronous handle response
             (if error
-              (println "Failed, exception is " error)
-              (println "Async HTTP GET: " status))
-            (println (str status headers body))
-            (println options))))
+              (go (>! chan error))
+              (go (>! chan body))))))
 
 (defn- request [method params request-method]
-  "Builds and sends a request to the server."
-  (let [tonce (str (* (System/currentTimeMillis) 1000))]
-    (post-request
+  "Builds and sends a request to the server for a result."
+  (let [tonce (str (* (System/currentTimeMillis) 1000))
+        c (chan)]
+    (post-request c
      (request-options
       tonce
       method
@@ -83,7 +83,8 @@
         tonce
         method
         params
-        request-method))))))
+        request-method))))
+    (json/parse-string (<!! (go (<! c))))))
 
 
 ; Public functions

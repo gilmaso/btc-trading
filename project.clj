@@ -24,7 +24,7 @@
                  [cheshire "5.2.0"]
                  [http-kit "2.1.13"]
                  [org.clojure/data.codec "0.1.0"]
-                 [org.clojure/math.numeric-tower "0.0.2"]]
+                 [org.clojure/core.async "0.1.262.0-151b23-alpha"]]
   :main ^:skip-aot btc-trading.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})

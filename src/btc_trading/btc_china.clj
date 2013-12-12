@@ -67,7 +67,8 @@
             (if error
               (println "Failed, exception is " error)
               (println "Async HTTP GET: " status))
-            (println (str status headers body)))))
+            (println (str status headers body))
+            (println options))))
 
 (defn- request [method params request-method]
   "Builds and sends a request to the server."
@@ -104,6 +105,38 @@
 
 (defn request-withdrawal [currency amount]
   "Currency options: CNY, BTC
-  TODO: Currently giving me -32000 error (Internal error)"
+  NOTE: I currently do not have any funds in my BTCChina account.
+  So, I get a -32000 internal server error. However, the standard
+  python implementatio provided by BTCChina also gives such an error."
   (request "requestWithdrawal" [currency amount] "post"))
 
+(defn get-deposits [currency]
+  "Currency options: BTC
+  Note: There should be a 'pending' parameter which takes the string 'false'
+  which supposidly provides only non-pending deposits. However, the standard
+  python implementation as provided by BTCChina is not working. So, this option
+  is not available here."
+  (request "getDeposits" [currency] "post"))
+
+(defn get-orders
+  "NOTE: get-orders shouldh have an open-only paramater which would supposedly give
+  all orders (even completed orders?). Howerver, the python implementatio as provided
+  by BTCChina does not work (it gives a -32019 invalid parameter error)."
+  ([] (request "getOrders" [] "post")))
+
+(defn get-order [order-id]
+  "TODO: This needs to be tested agains a real-life order."
+  (request "getOrder" [order-id] "post"))
+
+(defn get-withdrawals []
+  "Note: get-withdrawals should have a 'pending' options, but the standard python
+  implementation does not provide a working version of this.
+  Note: The BTCChina api apparently does not support 'CNY' as a withdrawal
+  parameter."
+  (request "getWithdrawals" ["BTC"] "post"))
+
+(defn get-withdrawal [id]
+  "TODO: Test with real withdrawals
+  Note: get-withdrawals should have a 'pending' options, but the standard python
+  implementation does not provide a working version of this."
+  (request "getWithdrawal" [id] "post"))

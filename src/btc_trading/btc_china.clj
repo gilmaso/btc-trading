@@ -16,9 +16,9 @@
 ; Email: gilmasog@gmail.com
 
 
-
 (ns btc-trading.btc-china
-  (:require [btc-trading.api_keys :as api-keys :only (btc-china-access-key btc-china-secret-key)]
+  (:require [btc-trading.api_keys :as api-keys :only (btc-china-access-key
+                                                      btc-china-secret-key)]
             [btc-trading.encoding :as encoding :only (to-base64)]
             [btc-trading.helpers :as helpers :only (seq-to-csv)]
             [btc-trading.hmac :as hmac :only (sign-to-hexstring)]
@@ -84,60 +84,130 @@
         method
         params
         request-method))))
-    (json/parse-string (<!! (go (<! c))))))
+    (json/parse-string (<!! (go (<! c))) true)))
 
 
-; Public functions
+;;;;;;;;;;;;;;;;;;;;;;;;
+;; Core BTCCHina API  ;;
+;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn get-account-info []
-  (request "getAccountInfo" [] "post"))
-
-(defn get-market-depth []
-  (request "getMarketDepth2" [] "post"))
-
+;; Buy, sell, cancel [Action]
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn buy-btc [price amount]
+  "Place a buy BTC order."
   (request "buyOrder" [price amount] "post"))
 
 (defn sell-btc [price amount]
+  "Place a sell BTC order."
   (request "sellOrder" [price amount] "post"))
 
 (defn cancel-order [order-id]
+  "Cancel an active order if the status is 'open'."
   (request "cancelOrder" [order-id] "post"))
 
-(defn request-withdrawal [currency amount]
-  "Currency options: CNY, BTC
-  NOTE: I currently do not have any funds in my BTCChina account.
-  So, I get a -32000 internal server error. However, the standard
-  python implementatio provided by BTCChina also gives such an error."
-  (request "requestWithdrawal" [currency amount] "post"))
 
+;; Buy, sell, cancel [Information]
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn get-orders
+  "Get all order status.
+  NOTE: get-orders shouldh have an open-only paramater which would supposedly give
+  all orders (even completed orders?). Howerver, the python implementatio as provided
+  by BTCChina does not work (it gives a -32019 invalid parameter error)."
+  ([] (request "getOrders" [] "post")))
+
+(defn get-order [order-id]
+  "Get order status.
+  TODO: This needs to be tested agains a real-life order."
+  (request "getOrder" [order-id] "post"))
+
+(defn get-order [order-id]
+  "Get order status.
+  TODO: This needs to be tested agains a real-life order."
+  (request "getOrder" [order-id] "post"))
+
+
+;; Deposit [Action]
+;;;;;;;;;;;;;;;;;;;;;
+; None known
+
+
+;; Deposit [Inforamtion]
+;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn get-deposits [currency]
-  "Currency options: BTC
+  "Get all user deposits.
+  Currency options: BTC
   Note: There should be a 'pending' parameter which takes the string 'false'
   which supposidly provides only non-pending deposits. However, the standard
   python implementation as provided by BTCChina is not working. So, this option
   is not available here."
   (request "getDeposits" [currency] "post"))
 
-(defn get-orders
-  "NOTE: get-orders shouldh have an open-only paramater which would supposedly give
-  all orders (even completed orders?). Howerver, the python implementatio as provided
-  by BTCChina does not work (it gives a -32019 invalid parameter error)."
-  ([] (request "getOrders" [] "post")))
 
-(defn get-order [order-id]
-  "TODO: This needs to be tested agains a real-life order."
-  (request "getOrder" [order-id] "post"))
+;; Withdraw [Action]
+;;;;;;;;;;;;;;;;;;;;;;
+(defn request-withdrawal [currency amount]
+  "Make a withdrawal request. BTC withdrawals will pick last used withdrawal address from user profile.
+  Currency options: CNY, BTC
+  NOTE: I currently do not have any funds in my BTCChina account.
+  So, I get a -32000 internal server error. However, the standard
+  python implementatio provided by BTCChina also gives such an error."
+  (request "requestWithdrawal" [currency amount] "post"))
 
+
+;; Withdraw [Information]
+;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn get-withdrawals []
-  "Note: get-withdrawals should have a 'pending' options, but the standard python
+  "Get all withdrawals.
+  Note: get-withdrawals should have a 'pending' options, but the standard python
   implementation does not provide a working version of this.
   Note: The BTCChina api apparently does not support 'CNY' as a withdrawal
   parameter."
   (request "getWithdrawals" ["BTC"] "post"))
 
 (defn get-withdrawal [id]
-  "TODO: Test with real withdrawals
+  "Get withdrawal status.
+  TODO: Test with real withdrawals
   Note: get-withdrawals should have a 'pending' options, but the standard python
   implementation does not provide a working version of this."
   (request "getWithdrawal" [id] "post"))
+
+
+;; Market data [Information]
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn get-market-depth [limit]
+  "Get the complete market depth. Returns a limited number of open bid and ask orders."
+  (request "getMarketDepth2" [limit] "post"))
+
+
+;; User info [Information]
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn get-account-info []
+  "Get stored account information and user balance."
+  (request "getAccountInfo" [] "post"))
+
+
+;; General purpose [Information]
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn get-transactions [type limit]
+  "Get transactions log.
+  Available types: 'all | fundbtc | withdrawbtc | fundmoney | withdrawmoney | refundmoney | buybtc | sellbtc | tradefee"
+  (request "getTransactions" [type limit] "post"))
+
+
+;;;;;;;;;;;;;;;;;;;;;
+;; Aftermarket API ;;
+;;;;;;;;;;;;;;;;;;;;;
+
+(defn lowest-ask []
+  "Returns the lowest ask order"
+  (-> (get-market-depth 1) :result :market_depth :ask (get 0) :price))
+
+(defn highest-bid []
+  "Returns the highest bid order"
+  (-> (get-market-depth 1) :result :market_depth :bid (get 0) :price))
+
+
+
+
+
+

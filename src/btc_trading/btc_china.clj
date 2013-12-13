@@ -204,9 +204,3 @@
 (defn highest-bid []
   "Returns the highest bid order"
   (-> (get-market-depth 1) :result :market_depth :bid (get 0) :price))
-
-(defn poll [api-call timeout]
-  "Polls the BTCChina server with the api-call supplied. It polls
-  indefinitely if there is no timeout parameter supplied or until the
-  timeout in seconds if the timeout is supplied."
-  )

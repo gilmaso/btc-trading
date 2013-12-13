@@ -2,24 +2,16 @@
   (:require [btc-trading.btc-china :as china]
             [clojure.core.async :as async :refer [chan close! go
                                                   >! >!! <! <!!
-                                                  thread]]))
+                                                  thread timeout]]))
 
 
+(let [c (chan)]
+  (future
+    (>!! c (china/get-account-info))
+    (>!! c (china/get-market-depth 10)))
+  (println (<!! c))
+  (println (<!! c)))
 
-
-
-
-
-(defn mything []
-  (let [c (chan)]
-    (do
-      (thread (>!! c china/get-market-depth))
-      (thread (>!! c "you"))
-      (println (<!! c))
-    (println (<!! c))
-    (close! c))))
-
-(mything)
 
 
 

@@ -109,8 +109,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn get-orders
   "Get all order status.
-  NOTE: get-orders shouldh have an open-only paramater which would supposedly give
-  all orders (even completed orders?). Howerver, the python implementatio as provided
+  NOTE: get-orders should have an open-only paramater which would supposedly give
+  all orders (even completed orders?). Howerver, the python implementation as provided
   by BTCChina does not work (it gives a -32019 invalid parameter error)."
   ([] (request "getOrders" [] "post")))
 
@@ -136,7 +136,7 @@
   "Get all user deposits.
   Currency options: BTC
   Note: There should be a 'pending' parameter which takes the string 'false'
-  which supposidly provides only non-pending deposits. However, the standard
+  which supposedly provides only non-pending deposits. However, the standard
   python implementation as provided by BTCChina is not working. So, this option
   is not available here."
   (request "getDeposits" [currency] "post"))
@@ -149,7 +149,7 @@
   Currency options: CNY, BTC
   NOTE: I currently do not have any funds in my BTCChina account.
   So, I get a -32000 internal server error. However, the standard
-  python implementatio provided by BTCChina also gives such an error."
+  python implementation provided by BTCChina also gives such an error."
   (request "requestWithdrawal" [currency amount] "post"))
 
 
@@ -198,9 +198,9 @@
 ;;;;;;;;;;;;;;;;;;;;;
 
 (defn lowest-ask []
-  "Returns the lowest ask order"
+  "Returns the lowest ask order."
   (-> (get-market-depth 1) :result :market_depth :ask (get 0) :price))
 
 (defn highest-bid []
-  "Returns the highest bid order"
+  "Returns the highest bid order."
   (-> (get-market-depth 1) :result :market_depth :bid (get 0) :price))

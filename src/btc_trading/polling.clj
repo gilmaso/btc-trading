@@ -12,7 +12,7 @@
     (println (<!! c))
     (close! c)))
 
-;(poll china/get-account-info)
+
 
 (defn poll2 "This polling method is broken." [string]
   (let [c (chan (sliding-buffer 10))]
@@ -38,7 +38,7 @@
       {:channel c})))
 
 (defn poll4 "Do some polling" [string millisecs]
-  (let [c (chan (sliding-buffer 10))]
+  (let [c (chan (sliding-buffer))]
     (future
       (Thread/sleep millisecs)
       (>!! c string)
@@ -52,27 +52,57 @@
     (close! c)
     {:channel c}))
 
+(defn poll6 [function sleep]
+  (let [c (chan (sliding-buffer 10))
+        kill-switch (promise)]
+    (async/thread
+     (while (not (realized? kill-switch))
+       (do
+         (Thread/sleep sleep)
+         (>!! c (function)))))
+    {:channel c :kill-switch kill-switch}))
+
+(defn poll7 [function sleep]
+  (let [c (chan (sliding-buffer 10))
+        kill-switch (promise)]
+    (while (not (realized? kill-switch))
+      (do
+        (Thread/sleep sleep)
+        (>!! c (function))))
+    {:channel c :kill-switch kill-switch}))
 
 
 
-(println "before")
+(def pollster {})
+
+(def my-promise (promise))
+
+;(println (<!! (poll6 china/get-account-info 5000)))
+
+;(deliver my-promise (merge pollster (poll6 china/get-account-info 5000)))
+
+;(println @my-promise)
+;(println (<!! (:channel @my-promise)))
+
+;(println "before")
 
 ; (println  (<!! (:channel  (poll2 "It's poll 2")))) ; Broken
 
-(println  (<!! (:channel  (poll3 "It's poll 3")))) ;
-(println "After 3")
+;(println  (<!! (:channel  (poll3 "It's poll 3")))) ;
+;(println "After 3")
 
 ;(println (<!! (:channel (poll4 "It's poll 4")))) ; This needs a deref "@"
-(println (<!! (:channel @(poll4 "It's poll 4" 3000)))) ;
-(println "After 4")
+;(println (<!! (:channel @(poll4 "It's poll 4" 3000)))) ;
+;(println "After 4")
 
 (println (<!! (:channel (poll5 "It's poll 5")))) ;
-(println "after 5")
+;(println "after 5")
 
-(println "after")
+;(println "after")
 
-(Thread/sleep 1000)
+;(Thread/sleep 1000)
 
-(println (<!! (:channel (poll5 "It's poll 5"))))
+;(println (<!! (:channel (poll5 "It's poll 5"))))
+
 
 

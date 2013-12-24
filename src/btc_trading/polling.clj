@@ -22,11 +22,8 @@
 
 (defn spawn-thread [function interval name]
   "Takes a function to be repeatedly called at a given interval.
-  Returns a kill switch.
-  Returns a uuid.
-  Takes: function
-         interval in milliseconds
-  Returns: promise"
+  Also, takes a name which is simply metadata for display purposes.
+  Returns a uuid."
   (let [kill-switch (promise)
         uuid (keyword (str (java.util.UUID/randomUUID)))
         start-time (System/currentTimeMillis)]

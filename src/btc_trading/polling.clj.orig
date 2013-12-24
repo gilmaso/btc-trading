@@ -5,9 +5,12 @@
 
 (defn spawn-thread [function interval name]
   "Takes a function to be repeatedly called at a given interval.
+<<<<<<< HEAD
   Returns a kill switch.
+=======
   Returns a uuid.
   Use the uuid to acc.
+>>>>>>> jobs
   Takes: function
          interval in milliseconds
   Returns: promise"

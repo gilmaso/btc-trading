@@ -7,7 +7,6 @@
   "Takes a function to be repeatedly called at a given interval.
   Returns a kill switch.
   Returns a uuid.
-  Use the uuid to acc.
   Takes: function
          interval in milliseconds
   Returns: promise"

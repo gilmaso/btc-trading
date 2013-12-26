@@ -25,12 +25,7 @@ Make sure to add your authentication keys:
 
 ## Examples
 
-No arguments: shows help
-
-exchanges: show list of available exchanges
-
-
-
+...
 
 ## Bugs
 

@@ -15,4 +15,49 @@
 ;
 ; Email: gilmasog@gmail.com
 
-(ns btc-trading.core)
+(ns btc-trading.core
+  (:require [btc-trading.exchanges :as exchanges :only (exchanges)]
+            [clojure.tools.cli :refer [parse-opts]])
+  (:gen-class))
+
+
+(def cli-options
+  [;; First three strings describe a short-option, long-option with optional
+   ;; example argument description, and a description. All three are optional
+   ;; and positional.
+   ["-p" "--port PORT" "Port number"
+    ]])
+
+(defn usage [options-summary]
+  (->> ["A Bitcoin trading application."
+        ""
+        "Usage: btc-trading [options] action"
+        ""
+        "Options:"
+        options-summary
+        ""
+        "Actions:"
+        "  exchanges    Lists available exchanges"
+        ""
+        "Please refer to the manual page for more information."]
+       (clojure.string/join \newline)))
+
+(defn error-msg [errors]
+  (str "The following errors occurred while parsing your command:\n\n"
+       (clojure.string/join \newline errors)))
+
+(defn exit [status msg]
+  (println msg)
+  (System/exit status))
+
+(defn -main [& args]
+  (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)]
+    ;; Handle help and error conditions
+    (cond
+      (:help options) (exit 0 (usage summary))
+      (not= (count arguments) 1) (exit 1 (usage summary))
+      errors (exit 1 (error-msg errors)))
+    ;; Execute program with options
+    (case (first arguments)
+      "exchanges" (exchanges/show-exchanges)
+      (exit 1 (usage summary)))))

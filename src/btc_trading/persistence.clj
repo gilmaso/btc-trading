@@ -15,8 +15,19 @@
 ;
 ; Email: gilmasog@gmail.com
 
-(ns btc-trading.presistence
+(ns btc-trading.persistence
   (:require [taoensso.carmine :as car :refer (wcar)]))
 
-(def server1-conn {:pool {<opts>} :spec {<opts>}})
-(defmacro wcar* [& body] `(car/wcar server1-conn ~@body))
+
+(def ^:private server1-conn {:pool {} :spec {}})
+
+(defmacro ^:private wcar* [& body] `(car/wcar server1-conn ~@body))
+
+
+; Public functions
+(defn disk-get [key]
+  (wcar* (car/get key)))
+
+(defn disk-set [key value]
+  (wcar* (car/set key value)))
+

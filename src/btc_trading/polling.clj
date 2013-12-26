@@ -15,10 +15,16 @@
 ;
 ; Email: gilmasog@gmail.com
 
-(ns btc-trading.polling)
+(ns btc-trading.polling
+  (:gen-class))
 
 
 (def ^:private spawned-threads (atom {}))
+
+
+; Public functions
+(defn -main []
+  (println "polling!"))
 
 (defn spawn-thread [function interval name]
   "Takes a function to be repeatedly called at a given interval.

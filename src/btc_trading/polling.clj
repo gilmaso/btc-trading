@@ -23,11 +23,9 @@
 
 
 ; Public functions
-(defn -main []
-  (println "polling!"))
 
 (defn spawn-thread [function interval name]
-  "Takes a function to be repeatedly called at a given interval.
+  "Takes a '(function) to be repeatedly called at a given interval.
   Also, takes a name which is simply metadata for display purposes.
   Returns a uuid."
   (let [kill-switch (promise)
@@ -37,12 +35,13 @@
       (while (not (realized? kill-switch))
               (do
                 (Thread/sleep interval)
+                (println (System/currentTimeMillis))
                 (eval function)))
       (swap! spawned-threads dissoc uuid)) ; Remove thread from spawned-threads listing
     (swap! spawned-threads conj {uuid
                                    {:name name
                                     :function function
-                                    :start-time start-time
+                                    :start-times start-time
                                     :kill-switch kill-switch}}) ; Add threads to spawned-threads
     uuid)) ; Return the uuid to caller
 

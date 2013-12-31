@@ -15,27 +15,20 @@
 ;
 ; Email: gilmasog@gmail.com
 
-(ns btc-trading.persistence
-  (:require [taoensso.carmine :as car :refer (wcar)]))
 
+(ns btc-trading.bot
+  (:require [btc-trading.persistence :as d]
+            [btc-trading.polling :as polling :only (spawn-thread
+                                                    get-spawned-threads)]
+            [btc-trading.btc-china :as btcc]))
 
-(def ^:private server1-conn {:pool {} :spec {}})
+(defn record-btcchina []
+  "Stores btcchina market depth data in redis:
+  Format: btcc:md:<time>:<market depth data"
+  (let [current-time (str (System/currentTimeMillis))
+        domain-key "btcc:md:"
+        redis-value (btcc/get-market-depth 10)]
+    (d/disk-append "timeseries" current-time)
+    (d/disk-set (str domain-key current-time) redis-value)
+    (str domain-key current-time)))
 
-(defmacro ^:private wcar* [& body] `(car/wcar server1-conn ~@body))
-
-
-; Public functions
-(defn disk-get [key]
-  (wcar* (car/get key)))
-
-(defn disk-set [key value]
-  (wcar* (car/set key value)))
-
-(defn disk-append [key value]
-  (wcar* (car/append key value)))
-
-(defn disk-keys [pattern]
-  (wcar* (car/keys pattern)))
-
-(defn disk-del [key]
-  (wcar* (car/del key)))
